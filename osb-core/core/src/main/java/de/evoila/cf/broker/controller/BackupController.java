@@ -5,6 +5,7 @@ import de.evoila.cf.broker.service.BackupService;
 import de.evoila.cf.model.BackupRequest;
 import de.evoila.cf.model.RestoreRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 /** @author Yannic Remmet. */
 @RestController
 @RequestMapping(value = "/v2/manage/backup")
+@ConditionalOnBean(BackupService.class)
 class BackupController extends BaseController {
 
     @Autowired

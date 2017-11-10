@@ -1,5 +1,6 @@
 package de.evoila.cf.cpi.bosh;
 
+import de.evoila.cf.broker.bean.BoshProperties;
 import de.evoila.cf.broker.bean.MongoDBSecurityKeyBean;
 import de.evoila.cf.broker.custom.mongodb.RandomString;
 import de.evoila.cf.broker.model.Plan;
@@ -21,7 +22,8 @@ public class MongoDBDeploymentManager extends DeploymentManager {
 
     private RandomString randomString;
 
-    MongoDBDeploymentManager(){
+    MongoDBDeploymentManager(BoshProperties boshProperties){
+        super(boshProperties);
         this.randomString = new RandomString(1024);
     }
     protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {

@@ -38,9 +38,9 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	}
 
 	protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-			List<ServerAddress> hosts, Plan p) throws ServiceBrokerException {
+			List<ServerAddress> hosts, Plan plan) throws ServiceBrokerException {
 		MongoDbService mongoDbService;
-		if(p.getPlatform() == Platform.BOSH)
+		if(plan.getPlatform() == Platform.BOSH)
 			mongoDbService = connection("admin", serviceInstance.getId(), "admin", serviceInstance);
 		else
 			mongoDbService = connection(serviceInstance);

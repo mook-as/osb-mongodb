@@ -30,7 +30,7 @@ public class MongoDBBoshPlatformService extends BoshPlatformService {
     private static final int defaultPort = 27017;
 
     MongoDBBoshPlatformService (PlatformRepository repository, CatalogService catalogService, ServicePortAvailabilityVerifier availabilityVerifier, BoshProperties boshProperties, Optional<DashboardClient> dashboardClient) {
-        super(repository, catalogService, availabilityVerifier, boshProperties, dashboardClient, new MongoDBDeploymentManager());
+        super(repository, catalogService, availabilityVerifier, boshProperties, dashboardClient, new MongoDBDeploymentManager(boshProperties));
     }
 
     public void runCreateErrands (ServiceInstance instance, Plan plan, Deployment deployment, Observable<List<ErrandSummary>> errands) throws PlatformException {

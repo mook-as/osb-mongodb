@@ -4,6 +4,7 @@
 package de.evoila.cf.broker.persistence.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -50,11 +51,12 @@ public class ServiceDefinitionRepositoryImpl implements ServiceDefinitionReposit
 	 */
 	@Override
 	public void validateServiceId(String serviceDefinitionId) throws ServiceDefinitionDoesNotExistException {
-		for(ServiceDefinition serviceDefinition : catalog.getServices()) {
-			if (!serviceDefinitionId.equals(serviceDefinition.getId())) {
-				throw new ServiceDefinitionDoesNotExistException(serviceDefinitionId);
-			}
-		}
+		boolean idExsistts = getServiceDefinition()
+								 .stream()
+								 .map(s -> serviceDefinitionId.equals(s.getId()))
+								 .reduce(Boolean.FALSE,Boolean::logicalOr);
+		if (!idExsistts)
+			throw new ServiceDefinitionDoesNotExistException(serviceDefinitionId);
 	}
 
 	// Depl + Bind

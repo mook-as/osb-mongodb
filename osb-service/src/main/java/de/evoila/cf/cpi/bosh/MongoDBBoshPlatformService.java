@@ -55,7 +55,7 @@ public class MongoDBBoshPlatformService extends BoshPlatformService {
             port = defaultPort;
         }
 
-        List<Vm> vms = connection.connection().vms().listDetails(in.getId()).toBlocking().first();
+        List<Vm> vms = connection.connection().vms().listDetails(BoshPlatformService.DEPLOYMENT_NAME_PREFIX + in.getId()).toBlocking().first();
         if(in.getHosts() == null)
             in.setHosts(new ArrayList<>());
 

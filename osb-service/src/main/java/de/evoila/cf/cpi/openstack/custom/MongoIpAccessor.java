@@ -3,24 +3,18 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
 import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
-import org.openstack4j.model.heat.Stack;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
-import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.ServerAddress;
-import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
-import jersey.repackaged.com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christian Brinker, evoila.
@@ -47,7 +41,6 @@ public class MongoIpAccessor extends CustomIpAccessor {
 		this.stackMappingRepository = mappingRepository;
 	}
 
-
 	private HeatFluent heatFluent;
 	private DefaultIpAccessor defaultIpAccessor;
 	private StackMappingRepository stackMappingRepository;
@@ -56,7 +49,7 @@ public class MongoIpAccessor extends CustomIpAccessor {
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {
 
 
-		ClusterStackMapping mapping = stackMappingRepository.findOne(instanceId);
+		ClusterStackMapping mapping = stackMappingRepository.findById(instanceId).get();
 
 
 		if (mapping == null) {

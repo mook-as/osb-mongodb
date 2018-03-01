@@ -1,12 +1,10 @@
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-
+import de.evoila.cf.broker.bean.OpenstackBean;
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.model.ServerAddress;
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
 import org.openstack4j.model.heat.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
-import de.evoila.cf.broker.bean.OpenstackBean;
-import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.ServerAddress;
-import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
-import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Yannic Remmet, Rene Schollmeyer, evoila
@@ -64,7 +62,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	
 	@Override
 	public void delete(String internalId) {
-		ClusterStackMapping stackMapping = stackMappingRepo.findOne(internalId);
+		ClusterStackMapping stackMapping = stackMappingRepo.findById(internalId).get();
 		
 		if(stackMapping == null) {
 			super.delete(internalId);

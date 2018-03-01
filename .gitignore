@@ -25,3 +25,6 @@ ca.pem
 *manifest-with-credentials.yml
 *.pid
 *logging.file_IS_UNDEFINED
+.idea/
+osb-service/src/main/resources/static/
+osb-service/src/main/resources/templates/

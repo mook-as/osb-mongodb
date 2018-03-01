@@ -3,17 +3,16 @@
  */
 package de.evoila.cf.broker.custom.mongodb;
 
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-
 import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
-import jersey.repackaged.com.google.common.collect.Lists;
+
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Johannes Hiemer
@@ -37,7 +36,7 @@ public class MongoDbService implements CustomExistingServiceConnection {
 		if(database == null)
 			database = "admin";
 		
-		List<ServerAddress> serverAddresses = Lists.newArrayList();
+		List<ServerAddress> serverAddresses = new ArrayList<>();
 		for (de.evoila.cf.broker.model.ServerAddress host : hosts) {
 			serverAddresses.add(new ServerAddress(host.getIp(), host.getPort()));
 		}

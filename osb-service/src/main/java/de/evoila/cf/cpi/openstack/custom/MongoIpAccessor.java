@@ -49,7 +49,7 @@ public class MongoIpAccessor extends CustomIpAccessor {
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {
 
 
-		ClusterStackMapping mapping = stackMappingRepository.findById(instanceId).get();
+		ClusterStackMapping mapping = stackMappingRepository.findOne(instanceId);
 
 
 		if (mapping == null) {

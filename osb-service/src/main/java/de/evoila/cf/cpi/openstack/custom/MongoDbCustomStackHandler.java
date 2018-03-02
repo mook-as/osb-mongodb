@@ -62,7 +62,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	
 	@Override
 	public void delete(String internalId) {
-		ClusterStackMapping stackMapping = stackMappingRepo.findById(internalId).get();
+		ClusterStackMapping stackMapping = stackMappingRepo.findOne(internalId);
 		
 		if(stackMapping == null) {
 			super.delete(internalId);

@@ -6,6 +6,7 @@ package de.evoila.cf.cpi.openstack.custom;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMappingRepository;
 import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
 import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -35,7 +36,7 @@ import java.util.List;
 @Primary
 public class MongoIpAccessor extends CustomIpAccessor {
 
-	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, StackMappingRepository mappingRepository){
+	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, ClusterStackMappingRepository mappingRepository){
 		this.heatFluent = heatFluent;
 		this.defaultIpAccessor = defaultIpAccessor;
 		this.stackMappingRepository = mappingRepository;
@@ -43,7 +44,7 @@ public class MongoIpAccessor extends CustomIpAccessor {
 
 	private HeatFluent heatFluent;
 	private DefaultIpAccessor defaultIpAccessor;
-	private StackMappingRepository stackMappingRepository;
+	private ClusterStackMappingRepository stackMappingRepository;
 
 	@Override
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {

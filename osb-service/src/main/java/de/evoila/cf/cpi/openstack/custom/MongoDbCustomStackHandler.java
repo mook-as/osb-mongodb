@@ -4,6 +4,7 @@ import de.evoila.cf.broker.bean.OpenstackBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMappingRepository;
 import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
 import org.openstack4j.model.heat.Stack;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class MongoDbCustomStackHandler extends CustomStackHandler {
 	private String keyPair;
 	
 	@Autowired
-	private StackMappingRepository stackMappingRepo;
+	private ClusterStackMappingRepository stackMappingRepo;
 	
 	@Autowired
 	private OpenstackBean openstackBean;

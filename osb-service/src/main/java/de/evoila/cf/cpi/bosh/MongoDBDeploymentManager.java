@@ -1,7 +1,6 @@
 package de.evoila.cf.cpi.bosh;
 
 import de.evoila.cf.broker.bean.BoshProperties;
-import de.evoila.cf.broker.bean.MongoDBSecurityKeyBean;
 import de.evoila.cf.broker.custom.mongodb.RandomString;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
@@ -26,21 +25,26 @@ public class MongoDBDeploymentManager extends DeploymentManager {
         super(boshProperties);
         this.randomString = new RandomString(1024);
     }
+
     protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         HashMap<String, Object> properties = new HashMap<>();
         properties.putAll(plan.getMetadata());
         properties.putAll(customParameters);
 
         HashMap<String, Object> manifestProperties = (HashMap<String, Object>) manifest.getProperties();
+        HashMap<String, Object> mongodb_exporter = (HashMap<String, Object>) manifestProperties.get("mongodb_exporter");
         HashMap<String, Object> mongodb = (HashMap<String, Object>) manifestProperties.get("mongodb");
         HashMap<String, Object> auth = (HashMap<String, Object>) mongodb.get("auth");
         HashMap<String, Object> replset = (HashMap<String, Object>) auth.get("replica-set");
+
+        mongodb_exporter.put("password", instance.getInternalId());
+
         if(replset == null){
             replset = new HashMap<>();
             auth.put("replica-set", replset);
         }
 
-        auth.put("password", instance.getId());
+        auth.put("password", instance.getInternalId());
         if(!replset.containsKey("keyfile")) {
             replset.put("keyfile", randomString.nextString());
         }

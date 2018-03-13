@@ -58,7 +58,9 @@ public class TestBoshPlatformService {
     public void before(){
         connection = new BoshConnection(properties.getUsername(),
                                         properties.getPassword(),
-                                        properties.getHost()).authenticate().connection();
+                                        properties.getHost(),
+                                        properties.getPort(),
+                                        properties.getAuthentication()).authenticate().connection();
 
         Map<String,Object> meta = new HashMap<>();
         meta.put("nodes", 3);

@@ -3,26 +3,23 @@
  */
 package de.evoila.cf.broker.custom;
 
-import java.math.BigInteger;
-import java.net.UnknownHostException;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.mongodb.BasicDBObject;
+import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
+import de.evoila.cf.broker.custom.mongodb.MongoDbService;
+import de.evoila.cf.broker.exception.ServiceBrokerException;
 import de.evoila.cf.broker.model.*;
-import de.evoila.cf.broker.service.PlatformService;
+import de.evoila.cf.broker.service.impl.BindingServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.mongodb.BasicDBObject;
-
-import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
-import de.evoila.cf.broker.custom.mongodb.MongoDbService;
-import de.evoila.cf.broker.exception.ServiceBrokerException;
-import de.evoila.cf.broker.service.impl.BindingServiceImpl;
-import jersey.repackaged.com.google.common.collect.Lists;
+import java.math.BigInteger;
+import java.net.UnknownHostException;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Johannes Hiemer.
@@ -38,9 +35,9 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	}
 
 	protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-			List<ServerAddress> hosts, Plan p) throws ServiceBrokerException {
+			List<ServerAddress> hosts, Plan plan) throws ServiceBrokerException {
 		MongoDbService mongoDbService;
-		if(p.getPlatform() == Platform.BOSH)
+		if(plan.getPlatform() == Platform.BOSH)
 			mongoDbService = connection("admin", serviceInstance.getId(), "admin", serviceInstance);
 		else
 			mongoDbService = connection(serviceInstance);
@@ -152,13 +149,10 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	@Override
 	protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
 													ServerAddress host, Plan plan) throws ServiceBrokerException {
-		log.warn("de.evoila.cf.broker.custom.MongoDbBindingService#createCredentials( java.lang.String, "
-				+ "de.evoila.cf.broker.model.ServiceInstance, de.evoila.cf.broker.model.ServerAddress) "
-				+ "was used instead of de.evoila.cf.broker.custom.MongoDbBindingService#createCredentials( "
-				+ "java.lang.String, de.evoila.cf.broker.model.ServiceInstance, "
-				+ "java.util.List<de.evoila.cf.broker.model.ServerAddress>)");
+		List<ServerAddress> hosts = new ArrayList<>();
+		hosts.add(host);
 
-		return createCredentials(bindingId, serviceInstance, Lists.newArrayList(host), plan);
+		return createCredentials(bindingId, serviceInstance, hosts, plan);
 	}
 
 	/*

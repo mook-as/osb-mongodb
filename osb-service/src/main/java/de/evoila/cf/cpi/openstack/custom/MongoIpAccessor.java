@@ -3,24 +3,19 @@
  */
 package de.evoila.cf.cpi.openstack.custom;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import de.evoila.cf.broker.exception.PlatformException;
+import de.evoila.cf.broker.model.ServerAddress;
 import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMapping;
+import de.evoila.cf.broker.persistence.mongodb.repository.ClusterStackMappingRepository;
 import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository;
-import org.openstack4j.model.heat.Stack;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
-import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.broker.model.ServerAddress;
-import de.evoila.cf.cpi.openstack.fluent.HeatFluent;
-import jersey.repackaged.com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christian Brinker, evoila.
@@ -41,16 +36,15 @@ import jersey.repackaged.com.google.common.collect.Lists;
 @Primary
 public class MongoIpAccessor extends CustomIpAccessor {
 
-	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, StackMappingRepository mappingRepository){
+	public MongoIpAccessor(HeatFluent heatFluent, DefaultIpAccessor defaultIpAccessor, ClusterStackMappingRepository mappingRepository){
 		this.heatFluent = heatFluent;
 		this.defaultIpAccessor = defaultIpAccessor;
 		this.stackMappingRepository = mappingRepository;
 	}
 
-
 	private HeatFluent heatFluent;
 	private DefaultIpAccessor defaultIpAccessor;
-	private StackMappingRepository stackMappingRepository;
+	private ClusterStackMappingRepository stackMappingRepository;
 
 	@Override
 	public List<ServerAddress> getIpAddresses(String instanceId) throws PlatformException {

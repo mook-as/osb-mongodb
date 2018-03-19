@@ -28,8 +28,10 @@ public class MongoDBDeploymentManager extends DeploymentManager {
 
     protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         HashMap<String, Object> properties = new HashMap<>();
-        properties.putAll(plan.getMetadata());
-        properties.putAll(customParameters);
+        if (customParameters != null && !customParameters.isEmpty())
+            properties.putAll(customParameters);
+
+        log.debug("Updating Deployment Manifest, replacing parameters");
 
         HashMap<String, Object> manifestProperties = (HashMap<String, Object>) manifest.getProperties();
         HashMap<String, Object> mongodb_exporter = (HashMap<String, Object>) manifestProperties.get("mongodb_exporter");

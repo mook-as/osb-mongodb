@@ -24,7 +24,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,13 +64,13 @@ public class TestBoshPlatformService {
         Map<String,Object> meta = new HashMap<>();
         meta.put("nodes", 3);
         plan = new Plan("planId", "Plan", "Test Plan", Platform.BOSH, 20, VolumeUnit.G, "", false,200);
-        plan.setMetadata(meta);
+        plan.getMetadata().setCustomParameters(meta);
 
         meta = new HashMap<>();
         meta.put("nodes", 5);
         updatedPlan = new Plan("updatedPlanId", "UpdatedPlan", "Updated Test Plan", Platform.BOSH, 30, VolumeUnit.G, "", false, 200);
 
-        updatedPlan.setMetadata(meta);
+        updatedPlan.getMetadata().setCustomParameters(meta);
         instance = new ServiceInstance("serviceId", "serviceDefId", "planId","none","none",null,"");
     }
 
@@ -103,7 +102,7 @@ public class TestBoshPlatformService {
 
     @Test
     public void d_testDelete() throws PlatformException, InterruptedException {
-        platformService.deleteServiceInstance(instance);
+        platformService.deleteInstance(instance);
         while (connection.tasks().listRunning().toBlocking().first().size() > 0){
             Thread.sleep(3000);
         }

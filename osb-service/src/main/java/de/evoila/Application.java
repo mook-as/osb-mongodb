@@ -4,8 +4,6 @@
 package de.evoila;
 
 import de.evoila.cf.broker.bean.MongoDBSecurityKeyBean;
-import de.evoila.cf.cpi.custom.props.DomainBasedCustomPropertyHandler;
-import de.evoila.cf.cpi.custom.props.MongoDBCustomPropertyHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -47,11 +45,6 @@ public class Application {
 		customProperties.put("database_name", "admin");
 
 		return customProperties;
-	}
-
-	@Bean
-	public DomainBasedCustomPropertyHandler domainPropertyHandler() {
-		return new MongoDBCustomPropertyHandler(keyLength);
 	}
 	
 	public static void main(String[] args) {

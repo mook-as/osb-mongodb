@@ -1,7 +1,6 @@
 package de.evoila.cf.cpi.bosh;
 
 import de.evoila.cf.broker.bean.BoshProperties;
-import de.evoila.cf.broker.bean.MongoDBSecurityKeyBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.model.DashboardClient;
 import de.evoila.cf.broker.model.Plan;
@@ -10,7 +9,6 @@ import de.evoila.cf.broker.model.ServiceInstance;
 import de.evoila.cf.broker.repository.PlatformRepository;
 import de.evoila.cf.broker.service.CatalogService;
 import de.evoila.cf.broker.service.availability.ServicePortAvailabilityVerifier;
-import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import io.bosh.client.deployments.Deployment;
 import io.bosh.client.errands.ErrandSummary;
 import io.bosh.client.tasks.Task;
@@ -21,7 +19,6 @@ import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -48,12 +45,6 @@ public class MongoDBBoshPlatformService extends BoshPlatformService {
 
     @Override
     protected void updateHosts (ServiceInstance in, Plan plan, Deployment deployment) {
-        final int port;
-        if (plan.getMetadata().containsKey(MongoDBDeploymentManager.PORT)) {
-            port = (int) plan.getMetadata().get(MongoDBDeploymentManager.PORT);
-        } else{
-            port = defaultPort;
-        }
 
         List<Vm> vms = connection.connection().vms().listDetails(BoshPlatformService.DEPLOYMENT_NAME_PREFIX + in.getId()).toBlocking().first();
         if(in.getHosts() == null)
@@ -62,7 +53,10 @@ public class MongoDBBoshPlatformService extends BoshPlatformService {
         in.getHosts().clear();
 
         vms.forEach(vm -> {
-            in.getHosts().add(new ServerAddress("Host-" + vm.getIndex(), vm.getIps().get(0), port));
+            in.getHosts().add(new ServerAddress("Host-" + vm.getIndex(), vm.getIps().get(0), defaultPort));
         });
     }
+
+    @Override
+    public void postDeleteInstance(ServiceInstance serviceInstance) throws PlatformException { }
 }

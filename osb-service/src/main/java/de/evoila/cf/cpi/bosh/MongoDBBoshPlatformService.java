@@ -24,6 +24,7 @@ import java.util.Optional;
 @Service
 @ConditionalOnBean(BoshProperties.class)
 public class MongoDBBoshPlatformService extends BoshPlatformService {
+
     private static final int defaultPort = 27017;
 
     MongoDBBoshPlatformService (PlatformRepository repository, CatalogService catalogService, ServicePortAvailabilityVerifier availabilityVerifier, BoshProperties boshProperties, Optional<DashboardClient> dashboardClient) {

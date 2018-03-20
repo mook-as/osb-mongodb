@@ -10,8 +10,8 @@ import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class MongoDBDeploymentManager extends DeploymentManager {
+
     public static final String NODES = "nodes";
     public static final String DATA_PATH = "data_path";
     public static final String REPLICA_SET_NAME = "replica-set-name";
@@ -81,6 +81,5 @@ public class MongoDBDeploymentManager extends DeploymentManager {
             manifest.getInstance_groups().get(0).setVm_type((String) properties.get(DISK_TYPE));
         }
     }
-
-
+    
 }

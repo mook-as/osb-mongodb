@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.evoila.cf.broker.custom;
+package de.evoila.cf.cpi.existing;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -49,7 +49,7 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 
 	public void deleteDatabase(MongoDbService connection, String database) throws PlatformException {
 		try {
-		connection.mongoClient().dropDatabase(database);
+		    connection.mongoClient().dropDatabase(database);
 		} catch (MongoException e) {
 			throw new PlatformException("Could not remove from database", e);
 		}

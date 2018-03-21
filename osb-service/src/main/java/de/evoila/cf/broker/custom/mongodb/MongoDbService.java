@@ -30,8 +30,7 @@ public class MongoDbService implements CustomExistingServiceConnection {
 		return mongoClient != null && mongoClient.getUsedDatabases() != null;
 	}
 
-	public void createConnection(String database, String username, String password, List<de.evoila.cf.broker.model.ServerAddress> hosts)
-			throws UnknownHostException {
+	public void createConnection(String username, String password, String database, List<de.evoila.cf.broker.model.ServerAddress> hosts) {
 		
 		if(database == null)
 			database = "admin";

@@ -1,9 +1,9 @@
 package de.evoila.cf.cpi.bosh;
 
 import de.evoila.cf.broker.bean.BoshProperties;
-import de.evoila.cf.broker.custom.mongodb.RandomString;
 import de.evoila.cf.broker.model.Plan;
 import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.broker.util.RandomString;
 import de.evoila.cf.cpi.bosh.deployment.DeploymentManager;
 import de.evoila.cf.cpi.bosh.deployment.manifest.Manifest;
 
@@ -12,21 +12,14 @@ import java.util.Map;
 
 public class MongoDBDeploymentManager extends DeploymentManager {
 
-    public static final String NODES = "nodes";
     public static final String DATA_PATH = "data_path";
     public static final String REPLICA_SET_NAME = "replica-set-name";
-    public static final String PORT = "port";
-    public static final String VM_TYPE = "vm_type";
-    public static final String DISK_TYPE = "disk_type";
-
-    private RandomString randomString;
 
     MongoDBDeploymentManager(BoshProperties boshProperties){
         super(boshProperties);
-        this.randomString = new RandomString(1024);
     }
 
-    protected void replaceParameters (ServiceInstance instance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+    protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
         HashMap<String, Object> properties = new HashMap<>();
         if (customParameters != null && !customParameters.isEmpty())
             properties.putAll(customParameters);
@@ -39,16 +32,19 @@ public class MongoDBDeploymentManager extends DeploymentManager {
         HashMap<String, Object> auth = (HashMap<String, Object>) mongodb.get("auth");
         HashMap<String, Object> replset = (HashMap<String, Object>) auth.get("replica-set");
 
-        mongodb_exporter.put("password", instance.getInternalId());
+        if(replset == null)
+            auth.put("replica-set", new HashMap<>());
 
-        if(replset == null){
-            replset = new HashMap<>();
-            auth.put("replica-set", replset);
-        }
 
-        auth.put("password", instance.getInternalId());
+        String password = new RandomString(15).nextString();
+        serviceInstance.setUsername(auth.get("user").toString());
+        serviceInstance.setPassword(password);
+
+        mongodb_exporter.put("password", password);
+        auth.put("password", password);
+
         if(!replset.containsKey("keyfile")) {
-            replset.put("keyfile", randomString.nextString());
+            replset.put("keyfile", new RandomString(1024).nextString());
         }
 
         if(!properties.containsKey(REPLICA_SET_NAME)){
@@ -56,30 +52,13 @@ public class MongoDBDeploymentManager extends DeploymentManager {
         }
 
         replset.put("name", properties.get(REPLICA_SET_NAME));
-        instance.getParameters().put("replicaSet", (String) properties.get(REPLICA_SET_NAME));
+        serviceInstance.getParameters().put("replicaSet", (String) properties.get(REPLICA_SET_NAME));
 
         if(properties.containsKey(DATA_PATH)){
             mongodb.put(DATA_PATH, properties.get(DATA_PATH));
         }
-        if(properties.containsKey(PORT)){
-            mongodb.put(PORT, properties.get(PORT));
-        }
 
-        if(properties.containsKey(NODES)){
-            manifest.getInstance_groups().get(0).setInstances((Integer) properties.get(NODES));
-        }
-
-        if(properties.containsKey(VM_TYPE)){
-            manifest.getInstance_groups().get(0).setVm_type((String) properties.get(VM_TYPE));
-        }
-
-        if(properties.containsKey(DISK_TYPE)){
-            manifest.getInstance_groups().get(0).setVm_type((String) properties.get(DISK_TYPE));
-        }
-
-        if(properties.containsKey(DISK_TYPE)){
-            manifest.getInstance_groups().get(0).setVm_type((String) properties.get(DISK_TYPE));
-        }
+        this.updateInstanceGroupConfiguration(manifest, plan);
     }
-    
+
 }

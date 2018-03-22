@@ -35,8 +35,7 @@ public class MongoDBCustomImplementation implements CustomExistingService {
 
         List<ServerAddress> serverAddresses = new ArrayList<>();
         for (String address : hosts) {
-            ServerAddress newAddress = new ServerAddress("", address, port);
-            serverAddresses.add(newAddress);
+            serverAddresses.add(new ServerAddress("", address, port));
             log.info("Opening connection to " + address + ":" + port);
         }
 

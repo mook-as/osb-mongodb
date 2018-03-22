@@ -26,9 +26,6 @@ import java.util.Map;
 @Service
 public class MongoDbBindingService extends BindingServiceImpl {
 
-    @Autowired(required = false)
-    private ExistingEndpointBean existingEndpointBean;
-
 	private Logger log = LoggerFactory.getLogger(MongoDbBindingService.class);
 
     private static String URI = "uri";
@@ -39,9 +36,11 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	private RandomString usernameRandomString = new RandomString(10);
     private RandomString passwordRandomString = new RandomString(15);
 
+    @Autowired(required = false)
+    private ExistingEndpointBean existingEndpointBean;
+
     @Override
-    protected ServiceInstanceBinding bindService(String bindingId, ServiceInstance serviceInstance, Plan plan)
-            throws ServiceBrokerException {
+    protected ServiceInstanceBinding bindService(String bindingId, ServiceInstance serviceInstance, Plan plan) {
 
         List<ServerAddress> hosts = serviceInstance.getHosts();
         Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, hosts, plan);
@@ -65,9 +64,8 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
 	@Override
 	protected ServiceInstanceBinding bindServiceKey(String bindingId, ServiceInstance serviceInstance, Plan plan,
-			List<ServerAddress> externalAddresses) throws ServiceBrokerException {
+			List<ServerAddress> externalAddresses) {
 
-		log.debug("bind service key");
 		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, externalAddresses, plan);
 
 		ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(bindingId, serviceInstance.getId(),
@@ -83,7 +81,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
     @Override
     protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-                                                    ServerAddress host, Plan plan) throws ServiceBrokerException {
+                                                    ServerAddress host, Plan plan) {
         List<ServerAddress> hosts = new ArrayList<>();
         hosts.add(host);
 
@@ -91,7 +89,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
     }
 
     private Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-                                                    List<ServerAddress> hosts, Plan plan) throws ServiceBrokerException {
+                                                    List<ServerAddress> hosts, Plan plan) {
         MongoDbService mongoDbService = connection(serviceInstance, plan);
 
         String username = usernameRandomString.nextString();

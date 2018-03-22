@@ -9,7 +9,6 @@ import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,8 +29,11 @@ public class MongoDbService implements CustomExistingServiceConnection {
 		return mongoClient != null && mongoClient.getUsedDatabases() != null;
 	}
 
+    public MongoClient mongoClient() {
+        return mongoClient;
+    }
+
 	public void createConnection(String username, String password, String database, List<de.evoila.cf.broker.model.ServerAddress> hosts) {
-		
 		if(database == null)
 			database = "admin";
 		
@@ -54,10 +56,6 @@ public class MongoDbService implements CustomExistingServiceConnection {
 
 	public int getPort() {
 		return port;
-	}
-
-	public MongoClient mongoClient() {
-		return mongoClient;
 	}
 
 }

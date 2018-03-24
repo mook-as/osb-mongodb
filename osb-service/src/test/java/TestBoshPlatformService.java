@@ -102,7 +102,7 @@ public class TestBoshPlatformService {
 
     @Test
     public void d_testDelete() throws PlatformException, InterruptedException {
-        platformService.deleteInstance(instance);
+        platformService.deleteInstance(instance, plan);
         while (connection.tasks().listRunning().toBlocking().first().size() > 0){
             Thread.sleep(3000);
         }

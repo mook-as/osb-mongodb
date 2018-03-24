@@ -5,16 +5,15 @@ package de.evoila.cf.broker.custom.mongodb;
 
 import com.mongodb.BasicDBObject;
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
-import de.evoila.cf.broker.exception.ServiceBrokerException;
 import de.evoila.cf.broker.model.*;
 import de.evoila.cf.broker.service.impl.BindingServiceImpl;
 import de.evoila.cf.broker.util.RandomString;
+import de.evoila.cf.broker.util.ServiceInstanceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +40,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
     @Override
     protected ServiceInstanceBinding bindService(String bindingId, ServiceInstance serviceInstance, Plan plan) {
-
-        List<ServerAddress> hosts = serviceInstance.getHosts();
-        Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, hosts, plan);
+        Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, plan, null);
 
         return new ServiceInstanceBinding(bindingId, serviceInstance.getId(), credentials, null);
     }
@@ -66,7 +63,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	protected ServiceInstanceBinding bindServiceKey(String bindingId, ServiceInstance serviceInstance, Plan plan,
 			List<ServerAddress> externalAddresses) {
 
-		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, externalAddresses, plan);
+		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, plan, externalAddresses.get(0));
 
 		ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(bindingId, serviceInstance.getId(),
 				credentials, null);
@@ -81,32 +78,23 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
     @Override
     protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-                                                    ServerAddress host, Plan plan) {
-        List<ServerAddress> hosts = new ArrayList<>();
-        hosts.add(host);
+                                                    Plan plan, ServerAddress host) {
 
-        return createCredentials(bindingId, serviceInstance, hosts, plan);
-    }
-
-    private Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-                                                    List<ServerAddress> hosts, Plan plan) {
         MongoDbService mongoDbService = connection(serviceInstance, plan);
 
         String username = usernameRandomString.nextString();
         String password = passwordRandomString.nextString();
-        String database = bindingId;
+        String database = serviceInstance.getId();
 
         MongoDBCustomImplementation.createUserForDatabase(mongoDbService, database, username, password);
 
-        String formattedHosts = "";
-        for (ServerAddress host : hosts) {
-            if (formattedHosts.length() > 0)
-                formattedHosts = formattedHosts.concat(",");
+        String endpoint = ServiceInstanceUtils.connectionUrl(serviceInstance.getHosts());
 
-            formattedHosts += String.format("%s:%d", host.getIp(), host.getPort());
-        }
+        // When host is not empty, it is a service key
+        if (host != null)
+            endpoint = host.getIp() + ":" + host.getPort();
 
-        String dbURL = String.format("mongodb://%s:%s@%s/%s", username, password, formattedHosts, database);
+        String dbURL = String.format("mongodb://%s:%s@%s/%s", username, password, endpoint, database);
         String replicaSet = serviceInstance.getParameters().get("replicaSet");
 
         if (replicaSet != null && !replicaSet.equals(""))
@@ -131,7 +119,7 @@ public class MongoDbBindingService extends BindingServiceImpl {
                     "admin", serviceInstance.getHosts());
         else if (plan.getPlatform() == Platform.EXISTING_SERVICE)
             mongoDbService.createConnection(existingEndpointBean.getUsername(), existingEndpointBean.getPassword(),
-                    existingEndpointBean.getDatabase(), existingEndpointBean.getHostsWithServerAddress());
+                    existingEndpointBean.getDatabase(), existingEndpointBean.getHosts());
 
         return mongoDbService;
     }

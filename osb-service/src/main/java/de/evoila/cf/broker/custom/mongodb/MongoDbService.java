@@ -3,11 +3,7 @@
  */
 package de.evoila.cf.broker.custom.mongodb;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
-import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
+import com.mongodb.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +13,7 @@ import java.util.List;
  * @author Johannes Hiemer
  *
  */
-public class MongoDbService implements CustomExistingServiceConnection {
-
-	private String host;
-
-	private int port;
+public class MongoDbService {
 
 	private MongoClient mongoClient;
 
@@ -42,20 +34,11 @@ public class MongoDbService implements CustomExistingServiceConnection {
 			serverAddresses.add(new ServerAddress(host.getIp(), host.getPort()));
 		}
 
-		this.host = hosts.get(0).getIp();
-		this.port = hosts.get(0).getPort();
-
 		MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(username, database, password.toCharArray());
-		mongoClient = new MongoClient(serverAddresses, Arrays.asList(mongoCredential));
-		mongoClient.setWriteConcern(WriteConcern.JOURNAL_SAFE);
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public int getPort() {
-		return port;
+		MongoClientOptions mongoClientOptions = MongoClientOptions
+                .builder()
+                .writeConcern(WriteConcern.JOURNALED).build();
+		mongoClient = new MongoClient(serverAddresses, Arrays.asList(mongoCredential), mongoClientOptions);
 	}
 
 }

@@ -3,24 +3,20 @@
  */
 package de.evoila.cf.cpi.existing;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Service;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
-import com.mongodb.WriteConcern;
-
+import com.mongodb.*;
 import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.custom.mongodb.MongoDBCustomImplementation;
 import de.evoila.cf.broker.custom.mongodb.MongoDbService;
 import de.evoila.cf.broker.exception.PlatformException;
-import de.evoila.cf.cpi.existing.CustomExistingService;
-import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
-import de.evoila.cf.cpi.existing.ExistingServiceFactory;
+import de.evoila.cf.broker.model.Plan;
+import de.evoila.cf.broker.model.Platform;
+import de.evoila.cf.broker.model.ServiceInstance;
+import de.evoila.cf.broker.util.RandomString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * @author René Schollmeyer
@@ -30,8 +26,14 @@ import de.evoila.cf.cpi.existing.ExistingServiceFactory;
 @Service
 @ConditionalOnBean(ExistingEndpointBean.class)
 public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
-	
-	@Autowired
+
+    RandomString usernameRandomString = new RandomString(10);
+    RandomString passwordRandomString = new RandomString(15);
+
+    @Autowired
+    private ExistingEndpointBean existingEndpointBean;
+
+    @Autowired
 	private MongoDBCustomImplementation mongodb;
 
 	public void createDatabase(MongoDbService connection, String database) throws PlatformException {
@@ -55,22 +57,35 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
 		}
 	}
 
-	@Override
-	protected void deleteInstance(CustomExistingServiceConnection connection, String instanceId)
-			throws PlatformException {
-		if (connection instanceof MongoDbService)
-			deleteDatabase((MongoDbService) connection, instanceId);
-	}
+    @Override
+    public void deleteInstance(ServiceInstance serviceInstance, Plan plan) throws PlatformException {
+        MongoDbService mongoDbService = this.connection(serviceInstance, plan);
 
-	@Override
-	protected CustomExistingService getCustomExistingService() {
-		return mongodb;
-	}
+        deleteDatabase(mongoDbService, serviceInstance.getId());
+    }
 
-	@Override
-	protected void createInstance(CustomExistingServiceConnection connection, String instanceId)
-			throws PlatformException {
-		if (connection instanceof MongoDbService)
-			createDatabase((MongoDbService) connection, instanceId);
-	}
+    @Override
+    public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan, Map<String, String> parameters) throws PlatformException {
+        String username = usernameRandomString.nextString();
+        String password = passwordRandomString.nextString();
+
+        serviceInstance.setUsername(username);
+        serviceInstance.setPassword(password);
+
+        MongoDbService mongoDbService = this.connection(serviceInstance, plan);
+
+        createDatabase(mongoDbService, serviceInstance.getId());
+
+        return serviceInstance;
+    }
+
+    private MongoDbService connection(ServiceInstance serviceInstance, Plan plan) {
+        MongoDbService jdbcService = new MongoDbService();
+
+        if (plan.getPlatform() == Platform.EXISTING_SERVICE)
+            jdbcService.createConnection(existingEndpointBean.getUsername(), existingEndpointBean.getPassword(),
+                    existingEndpointBean.getDatabase(), existingEndpointBean.getHosts());
+
+        return jdbcService;
+    }
 }

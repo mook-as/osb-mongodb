@@ -77,8 +77,8 @@ public class MongoDbBindingService extends BindingServiceImpl {
 	}
 
     @Override
-    protected Map<String, Object> createCredentials(String bindingId, ServiceInstance serviceInstance,
-                                                    Plan plan, ServerAddress host) {
+    protected Map<String, Object> createCredentials(String bindingId, ServiceInstanceBindingRequest serviceInstanceBindingRequest,
+                                                    ServiceInstance serviceInstance, Plan plan, ServerAddress host) {
 
         MongoDbService mongoDbService = connection(serviceInstance, plan);
 

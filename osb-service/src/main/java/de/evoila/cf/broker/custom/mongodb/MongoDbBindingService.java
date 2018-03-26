@@ -39,13 +39,6 @@ public class MongoDbBindingService extends BindingServiceImpl {
     private ExistingEndpointBean existingEndpointBean;
 
     @Override
-    protected ServiceInstanceBinding bindService(String bindingId, ServiceInstance serviceInstance, Plan plan) {
-        Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, plan, null);
-
-        return new ServiceInstanceBinding(bindingId, serviceInstance.getId(), credentials, null);
-    }
-
-    @Override
     protected void deleteBinding(ServiceInstanceBinding binding, ServiceInstance serviceInstance, Plan plan) {
         MongoDbService mongoDbService = connection(serviceInstance, plan);
 
@@ -60,10 +53,11 @@ public class MongoDbBindingService extends BindingServiceImpl {
 
 
 	@Override
-	protected ServiceInstanceBinding bindServiceKey(String bindingId, ServiceInstance serviceInstance, Plan plan,
+	protected ServiceInstanceBinding bindServiceKey(String bindingId, ServiceInstanceBindingRequest serviceInstanceBindingRequest,
+                                                    ServiceInstance serviceInstance, Plan plan,
 			List<ServerAddress> externalAddresses) {
 
-		Map<String, Object> credentials = createCredentials(bindingId, serviceInstance, plan, externalAddresses.get(0));
+		Map<String, Object> credentials = createCredentials(bindingId, null, serviceInstance, plan, externalAddresses.get(0));
 
 		ServiceInstanceBinding serviceInstanceBinding = new ServiceInstanceBinding(bindingId, serviceInstance.getId(),
 				credentials, null);

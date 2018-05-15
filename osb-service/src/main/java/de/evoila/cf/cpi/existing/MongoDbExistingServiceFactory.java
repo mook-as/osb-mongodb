@@ -65,7 +65,11 @@ public class MongoDbExistingServiceFactory extends ExistingServiceFactory {
     }
 
     @Override
+<<<<<<< HEAD
     public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan, Map<String, Object> parameters) throws PlatformException {
+=======
+    public ServiceInstance createInstance(ServiceInstance serviceInstance, Plan plan, Map<String, String> parameters) throws PlatformException {
+>>>>>>> 6cd2b24532961aab880335c137cca7125a78d2d5
         String username = usernameRandomString.nextString();
         String password = passwordRandomString.nextString();
 

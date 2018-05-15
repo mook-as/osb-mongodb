@@ -93,7 +93,11 @@ public class TestBoshPlatformService {
 
     @Test
     public void c_testUpdate() throws PlatformException {
+<<<<<<< HEAD
         platformService.updateInstance(instance, updatedPlan, new HashMap<>());
+=======
+        platformService.updateInstance(instance, updatedPlan);
+>>>>>>> 6cd2b24532961aab880335c137cca7125a78d2d5
         assertNotNull(connection.deployments().list().toBlocking().first()
                 .stream().filter(e -> e.getName().equals(instance.getId())).findFirst().get());
         assertEquals(connection.vms().listDetails(instance.getId()).toBlocking().first().size(), 5);

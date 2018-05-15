@@ -19,8 +19,12 @@ public class MongoDBDeploymentManager extends DeploymentManager {
         super(boshProperties);
     }
 
+<<<<<<< HEAD
     @Override
     protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map<String, Object> customParameters) {
+=======
+    protected void replaceParameters(ServiceInstance serviceInstance, Manifest manifest, Plan plan, Map<String, String> customParameters) {
+>>>>>>> 6cd2b24532961aab880335c137cca7125a78d2d5
         HashMap<String, Object> properties = new HashMap<>();
         if (customParameters != null && !customParameters.isEmpty())
             properties.putAll(customParameters);

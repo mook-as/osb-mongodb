@@ -1,10 +1,10 @@
 ---
-name: mongodb3
+name: osb-bosh-mongodb
 
 releases:
-- name: mongodb3
+- name: osb-bosh-mongodb
   version: latest
-- name: osb-monitoring
+- name: osb-bosh-monitoring
   version: latest
 
 update:
@@ -15,34 +15,36 @@ update:
 
 instance_groups:
 - name: mongodb3
-  instances: 4
+  instances: 1
   jobs:
   - name: mongodb3
-    release: mongodb3
+    release: osb-bosh-mongodb
   - name: node-exporter
-    release: osb-monitoring
+    release: osb-bosh-monitoring
   - name: mongodb-exporter
-    release: osb-monitoring
-  vm_type: default
+    release: osb-bosh-monitoring
+  vm_type: minimal
   stemcell: default
-  persistent_disk_type: default
+  persistent_disk_type: 10GB
+  azs:
+  - z1
   networks:
-  - name: default
+  - name: service
 
 - name: replset
   instances: 1
   lifecycle: errand
   jobs:
   - name: create-replset
-    release: mongodb3
+    release: osb-bosh-mongodb
   - name: reconfigure-replset
-    release: mongodb3
-  vm_type: default
+    release: osb-bosh-mongodb
+  vm_type: minimal
   stemcell: default
-  persistent_disk_type: default
+  azs:
+    - z1
   networks:
-  - name: default
-
+  - name: service
 
 properties:
   mongodb:

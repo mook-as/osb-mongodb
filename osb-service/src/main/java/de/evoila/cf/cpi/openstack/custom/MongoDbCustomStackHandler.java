@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import de.evoila.cf.broker.bean.OpenstackBean;
@@ -27,6 +28,7 @@ import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository
 
 @Service
 @ConditionalOnBean(OpenstackBean.class)
+@ConditionalOnProperty(name="openstack.endpoint")
 public class MongoDbCustomStackHandler extends CustomStackHandler {
 
 	private static final String PRE_IP_TEMPLATE = "/openstack/pre-ips.yaml";

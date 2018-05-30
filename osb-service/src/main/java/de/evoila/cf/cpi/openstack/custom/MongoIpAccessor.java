@@ -12,6 +12,7 @@ import de.evoila.cf.broker.persistence.mongodb.repository.StackMappingRepository
 import org.openstack4j.model.heat.Stack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ import jersey.repackaged.com.google.common.collect.Lists;
 @Service
 @Primary
 @ConditionalOnBean(HeatFluent.class)
+@ConditionalOnProperty(name="openstack.endpoint")
 public class MongoIpAccessor extends CustomIpAccessor {
 	@Autowired
 	private HeatFluent heatFluent;

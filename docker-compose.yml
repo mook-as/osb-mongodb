@@ -1,0 +1,28 @@
+# Docker compose definition
+---
+version: '3'
+services:
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq
+    restart: always
+  mongo:
+    image: mongo:3
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+    - 27017:27017/tcp
+  service:
+    image: evoila/mongodb
+    links:
+    - rabbit
+    environment:
+      MESSAGING_RABBITMQ_HOST: rabbit
+      MESSAGING_RABBITMQ_PORT: 5672
+      MESSAGING_RABBITMQ_VIRTUAL_HOST: rabbit
+      MESSAGING_RABBITMQ_USERNAME: guest
+      MESSAGING_RABBITMQ_PASSWORD: ""
+    ports:
+    - 8080:8080/tcp
